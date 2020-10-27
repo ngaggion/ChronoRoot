@@ -6,6 +6,11 @@ Nicolás Gaggion¹, Federico Ariel², Vladimir Daric³, Éric Lambert³, Simon L
 ² Instituto de Agrobiotecnología del Litoral (IAL), CONICET, FBCB, Universidad Nacional del Litoral, Colectora Ruta Nacional 168 km 0, Santa Fe, Argentina.\
 ³ Institute of Plant Sciences Paris-Saclay (IPS2), CNRS, INRA, University Paris-Saclay and University of Paris Bâtiment 630, 91192 Gif sur Yvette, France.
 
+Video abstract:https://www.youtube.com/watch?v=3En7OyAwv_U
+
+Pre-print available on: https://www.biorxiv.org/content/10.1101/2020.10.27.350553v1
+Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
+
 ![Test Image 1](images/workflow_resunetds.png)
 
 ### Installation:
