@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rsml xmlns:po="http://www.plantontology.org/xml-dtd/po.dtd">
+	<metadata>
+		<version>1</version>
+		<unit>pixel</unit>
+		<resolution>1</resolution>
+		<last-modified>2014-02-20T00:00:00</last-modified>
+		<software>pRA</software>
+		<user>ngaggion</user>
+
+		<file-key>RSML-example:arabidopsis_simple</file-key>
+
+		<image>
+			<name>arabidopsis_simple</name>
+			<captured>2014-02-19T00:00:00</captured>
+		</image>
+
+		<time-sequence>
+			<label>secuencia</label>
+			<index>0</index>
+			<unified>true</unified>
+		</time-sequence>
+
+	</metadata>
+
+	<scene>
+	</scene>
+</rsml>
