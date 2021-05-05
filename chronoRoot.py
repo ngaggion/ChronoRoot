@@ -45,4 +45,4 @@ if __name__ == "__main__":
     else:
         conf['SegPath'] = args.path
 
-    ChronoRhizo(conf)
+    ChronoRootAnalyzer(conf)
