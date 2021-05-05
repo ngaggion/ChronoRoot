@@ -29,6 +29,7 @@ Then install the following packages via pip:
 pip install tensorflow-gpu==1.15
 pip install opencv-python
 pip install git+https://github.com/lucasb-eyer/pydensecrf.git
+pip install requests
 ```
 In case of not having a GPU, use this line instead of the first one: 
 ```
