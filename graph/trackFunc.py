@@ -133,8 +133,8 @@ def matchGraphs(graph1, graph2):
             seed = g2.vertex(v)
             available[v] = 0
         else:
-            print('No SEED')
-            raise Exception ("BAD TRACKING")
+            #print('No SEED')
+            raise Exception ("No seed point")
     
     pos_vertex2[:,0] = pos_vertex2[:,0] * available
     pos_vertex2[:,1] = pos_vertex2[:,1] * available
@@ -169,7 +169,22 @@ def matchGraphs(graph1, graph2):
             else:
                 if len(vecinos) == 1:
                     nodetype2[i] = "LTip"
-    
+
+    seed = gt.find_vertex(g2, nodetype2, "Ini")
+    if len(seed) == 1:
+        seed = seed[0]
+    else:
+        seed_prev = gt.find_vertex(g1, nodetype1, "Ini")
+        p1 = pos1[seed_prev[0]]
+        v, d = find_nearest_b(p1, pos_vertex2)
+        if d < 20:
+            age2[v] = age1[seed_prev[0]] + 1
+            nodetype2[v] = "Ini"
+            seed = g2.vertex(v)
+        else:
+            #print('No SEED')
+            raise Exception ("No seed point")
+            
     # edge tracking
     camino, _ = gt.shortest_path(g2, seed, end, weights = weight2)
 

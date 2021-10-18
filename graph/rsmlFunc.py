@@ -37,6 +37,8 @@ def createTree(conf, i, images, grafo, ske, ske2):
             seed = grafo[1][k]
             seed = np.array(seed, dtype='int')
     
+    
+    
     ## Gets the labels of every edge of the main root
     mainRoot = []
     for k in grafo[3]:

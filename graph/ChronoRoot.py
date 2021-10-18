@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import csv
 import cv2
+import numpy as np
 
 from .fileFunc import createResultFolder, loadPath, getROIandSeed
 from .imageFunc import getCleanSeg, getCleanSke, savePlotImages, saveEmpty
@@ -73,7 +74,7 @@ def ChronoRootAnalyzer(conf):
             
             image_name = images[i].replace(conf['Path'],'').replace('/','')
             saveProps(image_name, i, False, csv_writer, 0)
-            saveEmpty(image_name, imagePath, original)
+            saveEmpty(image_name, imagePath, original, seg)
         
         print('Growth Begin')
         grafo, seed, ske2 = createGraph(ske.copy(), seed, enodes, bnodes)
@@ -108,8 +109,10 @@ def ChronoRootAnalyzer(conf):
             if flag1:
                 ske, bnodes, enodes, flag2 = getCleanSke(seg)
                 if not flag2:
+                    print("Error in the skeleton")
                     errorFlag_ = True
             else:
+                print("Error in the segmentation")
                 errorFlag_ = True
             
             trackError = False
@@ -124,6 +127,7 @@ def ChronoRootAnalyzer(conf):
                         ske =  ske_.copy()
                         ske2 = ske2_.copy()
                     except:
+                        print("Error on node tracking")
                         trackError = True
                 else:
                     grafo = graphInit(grafo2)
@@ -133,23 +137,36 @@ def ChronoRootAnalyzer(conf):
             else:
                 image_name = images[i].replace(conf['Path'],'').replace('/','')
                 saveProps(image_name, i, False, csv_writer, 0)
-                saveEmpty(image_name, imagePath, original)
+                saveEmpty(image_name, imagePath, original, seg)
             
             segErrorFlag = errorFlag_
-            
+                        
             if not segErrorFlag and not trackError:           
                 gPath = os.path.join(graphsPath, 'graph_%s.xml.gz' %i)
                 saveGraph(grafo, gPath)
                 
-                rsmlTree, numberLR = createTree(conf, i, images, grafo, ske, ske2)
-                rsml = os.path.join(rsmlPath, 'TimeStep-%s.rsml' %i)
-                rsmlTree.write(open(rsml, 'w'), encoding='unicode')
+                seedrsml = None
+                v = grafo[0].get_vertices()
+                for k in v:
+                    if grafo[4][k] == "Ini":
+                        seedrsml = grafo[1][k]
+                        seedrsml = np.array(seed, dtype='int')
                 
-                image_name = images[i].replace(conf['Path'],'').replace('/','')
-                saveProps(image_name, i, grafo, csv_writer, numberLR)
+                if seedrsml is None:
+                    trackError = True
+                    image_name = images[i].replace(conf['Path'],'').replace('/','')
+                    saveProps(image_name, i, False, csv_writer, 0)
+                    saveEmpty(image_name, imagePath, original, seg)
+                else:
+                    rsmlTree, numberLR = createTree(conf, i, images, grafo, ske, ske2)
+                    rsml = os.path.join(rsmlPath, 'TimeStep-%s.rsml' %i)
+                    rsmlTree.write(open(rsml, 'w'), encoding='unicode')
                 
-                original = cv2.imread(images[i])[bbox[0]:bbox[1],bbox[2]:bbox[3]]
-                savePlotImages(image_name, imagePath, original, seg, grafo, ske2)
+                    image_name = images[i].replace(conf['Path'],'').replace('/','')
+                    saveProps(image_name, i, grafo, csv_writer, numberLR)
+                    
+                    original = cv2.imread(images[i])[bbox[0]:bbox[1],bbox[2]:bbox[3]]
+                    savePlotImages(image_name, imagePath, original, seg, grafo, ske2)
         
             if trackError and trackCount > 5:
                 print('Analysis ended early at timestep', i, 'of', N)

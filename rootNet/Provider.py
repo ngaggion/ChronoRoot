@@ -380,7 +380,7 @@ class DataProvider(BaseDataProvider):
         names.append([name])
         
         if self.pad:
-            train_data = padImgToMakeItMultipleOf(train_data)
+            train_data = padImgToMakeItMultipleOf(train_data, [32,32])
             
         
         ny = train_data.shape[0]

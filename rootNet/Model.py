@@ -1,25 +1,7 @@
-""" 
-ChronoRoot: High-throughput phenotyping by deep learning reveals novel temporal parameters of plant root system architecture
-Copyright (C) 2020 Nicolás Gaggion
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
 import tensorflow as tf
 import logging
 
-from .modelUtils import pixel_wise_softmax, dice_coe_c1, dice_hard_coe_c1
+from .modelUtils import pixel_wise_softmax, dice_coe_c1
 from .unetModels import ResUNet, UNet, ResUNetDS
 from .SegNet import SegNet
 from .DeepLab import DeepLab
@@ -62,13 +44,13 @@ class RootNet(object):
 
         # Shared part of the network across multiple levels
         if config['Model'] == "ResUNet":
-            self.unet = ResUNet("ResUNet2", self.finetuneLayers, self.dropout)
+            self.unet = ResUNet("ResUNet", self.finetuneLayers, self.dropout)
             logging.debug("ResUNet")
         elif config['Model'] == "UNet":
             self.unet = UNet("UNet", self.finetuneLayers, self.dropout)
             logging.debug("UNet")
         elif config['Model'] == "ResUNetDS":
-            self.unet = ResUNetDS("ResUNetDS2", self.finetuneLayers, self.dropout)
+            self.unet = ResUNetDS("ResUNetDS", self.finetuneLayers, self.dropout)
             logging.debug("ResUNetDS")
         elif config['Model'] == "SegNet":
             self.unet = SegNet("SegNet", self.finetuneLayers, self.dropout)
@@ -86,9 +68,12 @@ class RootNet(object):
         # GT Image
         self.y = tf.compat.v1.placeholder(tf.float32, gtShape, name='y')
 
+        #self.learning_rate = config['learning_rate']
+        # logging.debug("Learning Rate")
+        # logging.debug(self.learning_rate)
         self.learning_rate = tf.compat.v1.placeholder(tf.float32, name='learning_rate')
 
-        if config['Model'] == "ResUNetDS":
+        if config['Model'] == "ResUNetDS" or config['Model'] == "ResUNetDS2":
             self.output, self.m_logits = self.unet(self.x, isTrain=self.phase)
         else:
             self.output = self.unet(self.x, isTrain=self.phase)
@@ -104,16 +89,16 @@ class RootNet(object):
                 self.soft_dice = (1 - dice_coe_c1(self.logits, self.y))
                 self.loss = self.soft_dice
             
-            if config['Model'] == "ResUNetDS":
+            if config['Model'] == "ResUNetDS" or config['Model'] == "ResUNetDS2" :
                 self.m_loss = -tf.reduce_mean(self.y*tf.math.log(tf.clip_by_value(self.m_logits,1e-10,1.0)), name="cross_entropy_b")
                 self.loss = config['lambda2'] * self.loss +  config['lambda1'] * self.m_loss
             
+            
             self.loss_f = self.loss + config["l2"] * regularizer
             
-            self.hard_dice = dice_hard_coe_c1(self.logits, self.y)
-            self.auc = tf.compat.v1.metrics.auc(self.y[:,:,:,1], self.logits[:,:,:,1], summation_method='careful_interpolation')
-            self.precision = tf.compat.v1.metrics.precision_at_thresholds(self.y[:,:,:,1], self.logits[:,:,:,1],[0.5])
-            self.recall = tf.compat.v1.metrics.recall_at_thresholds(self.y[:,:,:,1], self.logits[:,:,:,1],[0.5])
+            #self.auc = tf.compat.v1.metrics.auc(self.y[:,:,:,1], self.logits[:,:,:,1], summation_method='careful_interpolation')
+            #self.precision = tf.compat.v1.metrics.precision_at_thresholds(self.y[:,:,:,1], self.logits[:,:,:,1],[0.5])
+            #self.recall = tf.compat.v1.metrics.recall_at_thresholds(self.y[:,:,:,1], self.logits[:,:,:,1],[0.5])
 
             update_ops = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)
 

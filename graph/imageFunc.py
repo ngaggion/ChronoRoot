@@ -95,8 +95,7 @@ def savePlotImages(name, folder, original, seg, grafo1, ske2):
     return
 
 
-def saveEmpty(name, folder, original):
-    seg = np.zeros_like(original)
+def saveEmpty(name, folder, original, seg):
     image = np.ones(original.shape[:2], dtype='uint8') * 255
     grafo_img = np.ones(original.shape[:2], dtype='uint8') * 255
     
@@ -115,6 +114,7 @@ def saveEmpty(name, folder, original):
     f4 = os.path.join(folder, "graph")
     path = os.path.join(f4, name)
     cv2.imwrite(path, grafo_img)
+    
     return
 
 
@@ -146,7 +146,7 @@ def getCleanSeg(segFile, bbox, seed):
         dist = np.abs(dist)
         is_in = cv2.pointPolygonTest(biggest_contour,(seed[0], seed[1]), False) > 0
         
-        if (dist < 30 or is_in) and size > 40:
+        if (dist < 30 or is_in) and size > 30:
             found = True
         
     return seg, found
@@ -163,14 +163,14 @@ def getCleanSke(seg):
     bnodes, enodes = skeleton_nodes(ske)
     
     flag = False
-    if len(enodes) > 1:
+    if len(enodes) >= 2:
         flag = True
         
     return ske, bnodes, enodes, flag
 
 
-def trim(ske):
-    #T like
+def trim(ske): ## Removes unwanted pixels from the skeleton
+    
     T=[]
     T0=np.array([[-1, 1, -1], 
                  [1, 1, 1], 
@@ -248,7 +248,7 @@ def trim(ske):
     return ske
 
 
-def prune(skel, num_it):
+def prune(skel, num_it): ## Removes branches with length lower than num_it
     orig = skel
     
     endpoint1 = np.array([[-1, -1, -1],

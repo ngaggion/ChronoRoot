@@ -72,7 +72,12 @@ def padImgToMakeItMultipleOf(v, multipleOf=[8, 8], mode='symmetric'):
     return np.pad(v, padding, mode)
 
 
-def SaveSegImage(conf, name, segmentation, path, suffix = ".png"):    
+def SaveSegImage(conf, name, segmentation, path, suffix = ".png", cutpad = False):    
+    #cutpad removes padding after segmentation
+    if cutpad:
+        h, w = conf['OriginalSize']
+        segmentation = segmentation[:h, :w]
+            
     if suffix == ".nii.gz":
         name = name[0][0].replace(suffix,".nii.gz")
         nombre = os.path.join(path, name)
@@ -81,7 +86,7 @@ def SaveSegImage(conf, name, segmentation, path, suffix = ".png"):
     else:   
         name = name[0][0].replace(suffix,"_mask.png")
         nombre = os.path.join(path, name)
-        save_image_as_it_is(nombre, segmentation)
+        save_image_with_scale(nombre, segmentation)
     return
 
 
@@ -90,13 +95,13 @@ def Segment(conf, input_dir, output_dir, crf):
     
     Provider = DataProvider(input_dir, data_suffix = ".png")
     data, name = Provider(1)
-
+    
     sess = tf.compat.v1.Session()
 
     conf["batchSize"] = 1
     conf["tileSize"] = list(data.shape[1:3])
 
-    net = RootNet(sess, conf, "RootNET", True)
+    net = RootNet(sess, conf, "RootNET", False)
     
     conf['ckptDir'] = os.path.join(os.path.join('modelWeights', conf['Model']),'ckpt')
     net.restore(conf['ckptDir'])
@@ -132,11 +137,8 @@ def Segment(conf, input_dir, output_dir, crf):
             outimg = crf_map[:,:,1]
         else:
             outimg = segment[0,:,:,1]
-            
-        outimg = outimg * 255
-        outimg = outimg.astype('uint8')
-        
-        SaveSegImage(conf, name, outimg, output_dir, ".png")
+                    
+        SaveSegImage(conf, name, outimg, output_dir, ".png", True)
         
     tf.compat.v1.reset_default_graph()
     sess.close()    
@@ -151,7 +153,6 @@ def ensembleModels(conf, input_dir, output_dir, crf, models):
     images = loadPath(input_dir, '*.png') 
 
     accum = np.zeros(cv2.imread(images[0], 0).shape, dtype=float)
-    accum = padImgToMakeItMultipleOf(accum,[32,32])
     
     for i in range(0, len(images)):
         print("File %s out of %s" %(i+1,len(images)))
@@ -191,8 +192,8 @@ def ensembleModels(conf, input_dir, output_dir, crf, models):
             accum = conf['Alpha'] * accum + ensemble
             
         _, outimg = cv2.threshold(accum, conf['Thresh'], 1.0, cv2.THRESH_BINARY)
-        SaveSegImage(conf, [[images[i].replace(input_dir, '').replace('/','')]], outimg, output_dir, ".png")
-    
+        SaveSegImage(conf, [[images[i].replace(input_dir, '').replace('/','')]], outimg, output_dir, ".png", True)
+     
     return
     
 

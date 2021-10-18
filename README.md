@@ -6,9 +6,9 @@ Nicolás Gaggion¹, Federico Ariel², Vladimir Daric³, Éric Lambert³, Simon L
 ² Instituto de Agrobiotecnología del Litoral (IAL), CONICET, FBCB, Universidad Nacional del Litoral, Colectora Ruta Nacional 168 km 0, Santa Fe, Argentina.\
 ³ Institute of Plant Sciences Paris-Saclay (IPS2), CNRS, INRA, University Paris-Saclay and University of Paris Bâtiment 630, 91192 Gif sur Yvette, France.
 
-Video abstract:https://www.youtube.com/watch?v=3En7OyAwv_U
+DOI: https://doi.org/10.1093/gigascience/giab052
 
-Pre-print available on: https://www.biorxiv.org/content/10.1101/2020.10.27.350553v1
+Video abstract:https://www.youtube.com/watch?v=3En7OyAwv_U
 
 Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
 
@@ -29,7 +29,6 @@ Then install the following packages via pip:
 pip install tensorflow-gpu==1.15
 pip install opencv-python
 pip install git+https://github.com/lucasb-eyer/pydensecrf.git
-pip install requests
 ```
 In case of not having a GPU, use this line instead of the first one: 
 ```
@@ -41,9 +40,10 @@ pip install tensorflow==1.15
 Download the weights on ChronoRoot/modelWeights from:\
 https://drive.google.com/file/d/17g7vPcTo6bF1iCf5zrj8iZTK6q48lyRm/view?usp=sharing 
 
-or run this line:
+or run this lines:
 
 ```
+pip install requests
 python downloadWeights.py
 ```
 

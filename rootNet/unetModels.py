@@ -1,21 +1,10 @@
-""" 
-ChronoRoot: High-throughput phenotyping by deep learning reveals novel temporal parameters of plant root system architecture
-Copyright (C) 2020 Nicolás Gaggion
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
+Created on Fri Mar 29 14:55:32 2019
 
+@author: ngaggion
+"""
 import tensorflow as tf
 
 from .modelUtils import conv2d, upsample2d, dropout, resUnit
@@ -23,6 +12,9 @@ from .modelUtils import pixel_wise_softmax
 
 
 class ResUNetDS(object):
+  """
+    Input has to be multiple of 4 (CHECK THIS).
+  """
   def __init__(self, name, finetuneLayers = None, dropout = 0.5):
     self.name = name
     self.reuse = None
@@ -38,55 +30,38 @@ class ResUNetDS(object):
       add1 = resUnit(x, 1, 16, 3, 1, "SAME", nonlinearity, isTrain)
       pool1 = tf.nn.max_pool2d(add1, [1, 2, 2, 1], [1, 2, 2, 1], "SAME")
       #drop1 = dropout(add1, self.dropout, isTrain, "drop1")
-      
-      # print('Add 1', add1.shape)
-      
+           
       add2 = resUnit(pool1, 2, 32, 3, 1, "SAME", nonlinearity, isTrain)
       pool2 = tf.nn.max_pool2d(add2, [1, 2, 2, 1], [1, 2, 2, 1], "SAME")
       #drop2 = dropout(pool2, self.dropout, isTrain, "drop2")
-      
-      # print('Add 2', add2.shape)
-      # print('Pool 2', pool2.shape)
-      
+            
       add3 = resUnit(pool2, 3, 64, 3, 1, "SAME", nonlinearity, isTrain)
       pool3 = tf.nn.max_pool2d(add3, [1, 2, 2, 1], [1, 2, 2, 1], "SAME")
       #drop3 = dropout(pool3, self.dropout, isTrain, "drop3")
       
-      # print('Add 3', add3.shape)
-      # print('Pool 3', pool3.shape)
-      
       add4 = resUnit(pool3, 4, 128, 3, 1, "SAME", nonlinearity, isTrain)
       drop4 = dropout(add4, self.dropout, isTrain, "drop4")
       
-      # print('Add 4', add4.shape)
-      # print('Pool 4', pool4.shape)
-      
       up4 = conv2d(upsample2d(drop4, 2), "deconv4", 64, 3, 1, "SAME", bn=False, af=None, is_train=isTrain)
-      # print('Up 4', up4.shape)
       concat5 = tf.add(up4, add3)
+    
       add5 = resUnit(concat5, 5, 64, 3, 1, "SAME", nonlinearity, isTrain)
       drop5 = dropout(add5, self.dropout, isTrain, "drop5")
-      # print('Add 5', add5.shape)
-      
+           
       up5 = conv2d(upsample2d(drop5, 2), "deconv5", 32, 3, 1, "SAME", bn=False, af=None, is_train=isTrain)
-      # print('Up 5', up5.shape)
-      
       concat6 = tf.add(up5, add2)
+
       add6 = resUnit(concat6, 6, 32, 3, 1, "SAME", nonlinearity, isTrain)
       drop6 = dropout(add6, self.dropout, isTrain, "drop6")
-      # print('Add 6', add6.shape)
-      
+ 
       up6 = conv2d(upsample2d(drop6, 2), "deconv6", 16, 3, 1, "SAME", bn=False, af=None, is_train=isTrain)
-      # print('Up 6', up6.shape)
       concat7 = tf.add(up6, add1)
+
       add7 = resUnit(concat7, 7, 16, 3, 1, "SAME", nonlinearity, isTrain)
-      # print('Add 7', add7.shape)
       
       unet_out1 = conv2d(add7, "unet_out", 2, 3, 1, "SAME", bn=True, af=None, is_train=isTrain)
       unet_out = pixel_wise_softmax(unet_out1)
       
-      # print('UNet out', unet_out.shape)
-
       stack = tf.concat([x, unet_out], axis = 3)
        
       conv8 = resUnit(stack, 8, 16, 3, 1, "SAME", nonlinearity, isTrain)
@@ -212,7 +187,6 @@ class ResUNet(object):
 
   def restore(self, sess, ckpt_path):
     self.saver.restore(sess, ckpt_path)
-    
     
 class UNet(object):
   """

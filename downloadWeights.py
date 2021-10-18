@@ -21,7 +21,7 @@ from zipfile import ZipFile
 import pathlib
 import os
 
-file_id = '1eVVbWqPUjwYCONeUmx-5nq1wyanhXcTh'
+file_id = '1tMGrQ_e1TLrULnSEw5_S0Ejy8y4i4E7D'
 destination = os.path.join(pathlib.Path().absolute(),'modelWeights.zip')
 
 print('Downloading model weights from Google Drive')

@@ -50,7 +50,12 @@ def padImgToMakeItMultipleOf(v, multipleOf=[8, 8], mode='symmetric'):
                (0, 0 if v.shape[1] % multipleOf[1] == 0 else multipleOf[1] - (v.shape[1] % multipleOf[1])))
     return np.pad(v, padding, mode)
 
-def SaveSegImage(conf, name, segmentation, path, suffix = ".png"):    
+def SaveSegImage(conf, name, segmentation, path, suffix = ".png", cutpad = False):    
+    #cutpad removes padding after segmentation
+    if cutpad:
+        h, w = conf['OriginalSize']
+        segmentation = segmentation[:h, :w]
+            
     if suffix == ".nii.gz":
         name = name[0][0].replace(suffix,".nii.gz")
         nombre = os.path.join(path, name)
@@ -60,8 +65,8 @@ def SaveSegImage(conf, name, segmentation, path, suffix = ".png"):
         name = name[0][0].replace(suffix,"_mask.png")
         nombre = os.path.join(path, name)
         save_image_with_scale(nombre, segmentation)
-    
     return
+
 
 def SegmentUNet(conf, input_dir, output_dir, crf):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
@@ -74,7 +79,7 @@ def SegmentUNet(conf, input_dir, output_dir, crf):
     conf["batchSize"] = 1
     conf["tileSize"] = list(data.shape[1:3])
 
-    net = RootNet(sess, conf, "RootNET", True)
+    net = RootNet(sess, conf, "RootNET", False)
     
     conf['ckptDir'] = os.path.join(os.path.join('modelWeights', conf['SavePoint']),'ckpt')
     net.restore(conf['ckptDir'])
@@ -112,7 +117,7 @@ def SegmentUNet(conf, input_dir, output_dir, crf):
             accum = conf['Alpha'] * accum + segment[0,:,:,1]
         
         _, outimg = cv2.threshold(accum, conf['Thresh'], 1.0, cv2.THRESH_BINARY)
-        SaveSegImage(conf, name, outimg, output_dir, ".png")
+        SaveSegImage(conf, name, outimg, output_dir, ".png", True)
         
     tf.compat.v1.reset_default_graph()
     sess.close()    
@@ -133,9 +138,9 @@ if __name__ == "__main__":
     
     available_models = ['UNet', 'ResUNet', 'ResUNetDS', 'SegNet', 'DeepLab']
     if args.model not in available_models:
+        # In case of using a ResUNetDS trained differently
         conf['Model'] = 'ResUNetDS'
         conf['SavePoint'] = args.model
-        #raise Exception()
     else:
         conf['SavePoint'] = args.model
         conf['Model'] = args.model    

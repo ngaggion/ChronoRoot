@@ -37,14 +37,14 @@ def load_path(search_path, ext = '*.png'):
 
 
 def adjust_gamma(image, gamma=1.0):
-	# build a lookup table mapping the pixel values [0, 255] to
-	# their adjusted gamma values
-	invGamma = 1.0 / gamma
-	table = np.array([((i / 255.0) ** invGamma) * 255
-		for i in np.arange(0, 256)]).astype("uint8")
+    # build a lookup table mapping the pixel values [0, 255] to
+    # their adjusted gamma values
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255
+        for i in np.arange(0, 256)]).astype("uint8")
  
-	# apply gamma correction using the lookup table
-	return np.float32(cv2.LUT(image.astype('uint8'), table))
+    # apply gamma correction using the lookup table
+    return np.float32(cv2.LUT(image.astype('uint8'), table))
 
 
 def flat_field_correct(img=None):
