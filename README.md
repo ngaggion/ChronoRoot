@@ -37,8 +37,8 @@ pip install tensorflow==1.15
 
 ### Usage:
 
-Download the weights on ChronoRoot/modelWeights from:\
-https://drive.google.com/file/d/17g7vPcTo6bF1iCf5zrj8iZTK6q48lyRm/view?usp=sharing 
+Download and extract the weights on ChronoRoot/modelWeights from:\
+https://drive.google.com/file/d/1tMGrQ_e1TLrULnSEw5_S0Ejy8y4i4E7D
 
 or run this lines:
 
