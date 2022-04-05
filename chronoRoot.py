@@ -20,8 +20,12 @@ from graph.ChronoRoot import ChronoRootAnalyzer
 import argparse
 
 if __name__ == "__main__":
-    conf = {}
-    file = exec(open('config.conf').read(), conf)
+    conf1 = {}
+    file = exec(open('config.conf').read(), conf1)
+    conf2 = {}
+    file = exec(open('cnns.conf').read(), conf2)
+    
+    conf = conf1 | conf2
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--savepath', type=str, help='Output directory', nargs="?")
@@ -43,6 +47,6 @@ if __name__ == "__main__":
     if not args.segpath:
         pass
     else:
-        conf['SegPath'] = args.path
+        conf['SegPath'] = args.segpath
 
     ChronoRootAnalyzer(conf)

@@ -198,8 +198,12 @@ def ensembleModels(conf, input_dir, output_dir, crf, models):
     
 
 if __name__ == "__main__":
-    conf = {}
-    file = exec(open('config.conf').read(), conf)
+    conf1 = {}
+    file = exec(open('config.conf').read(), conf1)
+    conf2 = {}
+    file = exec(open('cnns.conf').read(), conf2)
+    
+    conf = conf1 | conf2
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--use_crf', action='store_true', default=False, help='no CRF post-processing')

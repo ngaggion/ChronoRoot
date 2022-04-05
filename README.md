@@ -14,7 +14,7 @@ Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
 
 ![Test Image 1](images/workflow_resunetds.png)
 
-### Installation:
+## Installation:
 
 First create the anaconda environment:
 ```
@@ -35,7 +35,15 @@ In case of not having a GPU, use this line instead of the first one:
 pip install tensorflow==1.15 
 ```
 
-### Usage:
+## Usage:
+
+ChronoRoot is meant to be used as a combination of two separate steps:
+
++ Plant root segmentation for each videosequence, obtaining the segmentation maps for each timestep.
++ Individual plant analysis, obtaining the graph representation for each root at every timestep.
+
+### Plant root segmentation:
+
 
 Download and extract the weights on ChronoRoot/modelWeights from:\
 https://drive.google.com/file/d/1tMGrQ_e1TLrULnSEw5_S0Ejy8y4i4E7D
@@ -55,7 +63,41 @@ For segmentation using the model ensemble use
 ```
 python segmentEnsemble.py imagePath --output_dir optionalSegPath --use_crf boolean
 ```
-For individual plant analysis, load the experiment data on config.conf and then run:
+
+### Individual plant analysis:
+
+Load the experiment data on config.conf:
+
+```
+# ========== Paths ========== 
+
+## The path where the video-sequence is.
+Path = "/media/ngaggion/Datasets/rpi6/1" 
+
+## The path where the output segmentation was saved.
+## For example, using the ensemble of models:
+SegPath = os.path.join(Path, 'SegEnsemble')
+
+## The path where we will be saving each plant analysis.
+Project = "/media/ngaggion/Experiment1"
+
+# ========== Analysis ========== 
+
+# Setting up the end of the experiment
+# Set to a number to limitate the maximum number of frames.
+# 0 = OFF, ChronoRoot will run until no images are left
+# For example 1344 (4 frames * 24 hours * 14 days)
+
+Limit = 1344 
+
+# ========== RSML METADATA ========== 
+
+fileKey = "Long day condition" # Identifier for the RSML file
+sequenceLabel = "rpi6" # Identifier for the sequence
+Plant = "Arabidopsis thaliana" # Plant under study
+```
+
+Then run:
 ```
 python chronoRoot.py
 ```
