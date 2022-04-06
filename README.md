@@ -18,7 +18,8 @@ Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
 
 ### Docker:
 
-Initial Docker support:
+Initial Docker support, for plant root segmentation only, as Docker does not provide a way to use openCV windows for RoI selection.\
+Run the following lines to build and run the docker:
 
 ```
 docker build -t chronodocker .
@@ -26,9 +27,11 @@ docker build -t chronodocker .
 docker run -t -i --gpus all -v /PATH_TO_DATA:/work/DATA chronodocker
 ```
 
-Complete PATH_TO_DATA to have your time series visible on the docker environment, at /work/DATA
-
+The code is saved at \work\ChronoRoot. \
+Complete PATH_TO_DATA to have your time series visible on the docker environment, at /work/DATA \
 Make sure to have installed the nvidia-docker2 package, more information on https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/user-guide.html.
+
+In case of using Docker for root segmentation, for root analysis we only need the conda environment packages and opencv-python. So, the tensorflow and pydensecrf installation can be ommited. 
 
 ### Manual:
 
