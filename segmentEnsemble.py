@@ -203,7 +203,7 @@ if __name__ == "__main__":
     conf2 = {}
     file = exec(open('cnns.conf').read(), conf2)
     
-    conf = conf1 | conf2
+    conf = {**conf1, **conf2}
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--use_crf', action='store_true', default=False, help='no CRF post-processing')

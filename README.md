@@ -16,6 +16,20 @@ Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
 
 ## Installation:
 
+### Docker:
+
+Initial Docker support:
+
+```
+docker build -t ChronoDocker .
+
+docker run -t -i -v /PATH_TO_DATA:/work/DATA ChronoDocker
+```
+
+Complete PATH_TO_DATA to have your time series visible on the docker environment, at /work/DATA
+
+### Manual:
+
 First create the anaconda environment:
 ```
 conda env create -f env.yml
@@ -44,15 +58,14 @@ ChronoRoot is meant to be used as a combination of two separate steps:
 
 ### Plant root segmentation:
 
-
-Download and extract the weights on ChronoRoot/modelWeights from:\
+Download and extract the weights (files already included in the docker) on ChronoRoot/modelWeights from:\
 https://drive.google.com/file/d/1tMGrQ_e1TLrULnSEw5_S0Ejy8y4i4E7D
 
-or run this lines:
-
+Or download by wget and extract using the following lines:
 ```
-pip install requests
-python downloadWeights.py
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1eVVbWqPUjwYCONeUmx-5nq1wyanhXcTh' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1eVVbWqPUjwYCONeUmx-5nq1wyanhXcTh" -O modelWeights.zip && rm -rf /tmp/cookies.txt
+
+unzip modelWeights.zip
 ```
 
 For fast segmentation with the **Deeply Supervised Residual U-Net** use
