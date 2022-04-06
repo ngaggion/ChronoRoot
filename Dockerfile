@@ -35,6 +35,6 @@ RUN source activate ChronoRoot; pip install tensorflow-gpu==1.15;
 RUN source activate ChronoRoot; pip install opencv-python; 
 RUN source activate ChronoRoot; pip install git+https://github.com/lucasb-eyer/pydensecrf.git
 
-RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1eVVbWqPUjwYCONeUmx-5nq1wyanhXcTh' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1eVVbWqPUjwYCONeUmx-5nq1wyanhXcTh" -O modelWeights.zip && rm -rf /tmp/cookies.txt;
+RUN wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1OSqvRXKay-0bsmQqtlmYnu_sp6-_I-eC' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1OSqvRXKay-0bsmQqtlmYnu_sp6-_I-eC" -O modelWeights.zip && rm -rf /tmp/cookies.txt
 RUN mv modelWeights.zip /work/ChronoRoot/modelWeights.zip
 RUN unzip /work/ChronoRoot/modelWeights.zip -d /work/ChronoRoot

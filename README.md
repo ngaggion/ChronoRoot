@@ -59,11 +59,11 @@ ChronoRoot is meant to be used as a combination of two separate steps:
 ### Plant root segmentation:
 
 Download and extract the weights (files already included in the docker) on ChronoRoot/modelWeights from:\
-https://drive.google.com/file/d/1tMGrQ_e1TLrULnSEw5_S0Ejy8y4i4E7D
+https://drive.google.com/file/d/1OSqvRXKay-0bsmQqtlmYnu_sp6-_I-eC
 
 Or download by wget and extract using the following lines:
 ```
-wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1eVVbWqPUjwYCONeUmx-5nq1wyanhXcTh' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1eVVbWqPUjwYCONeUmx-5nq1wyanhXcTh" -O modelWeights.zip && rm -rf /tmp/cookies.txt
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1OSqvRXKay-0bsmQqtlmYnu_sp6-_I-eC' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1OSqvRXKay-0bsmQqtlmYnu_sp6-_I-eC" -O modelWeights.zip && rm -rf /tmp/cookies.txt
 
 unzip modelWeights.zip
 ```
