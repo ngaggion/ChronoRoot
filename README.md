@@ -21,9 +21,9 @@ Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
 Initial Docker support:
 
 ```
-docker build -t ChronoDocker .
+docker build -t chronodocker .
 
-docker run -t -i --gpus all -v /PATH_TO_DATA:/work/DATA ChronoDocker
+docker run -t -i --gpus all -v /PATH_TO_DATA:/work/DATA chronodocker
 ```
 
 Complete PATH_TO_DATA to have your time series visible on the docker environment, at /work/DATA
