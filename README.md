@@ -23,10 +23,11 @@ Initial Docker support:
 ```
 docker build -t ChronoDocker .
 
-docker run -t -i -v /PATH_TO_DATA:/work/DATA ChronoDocker
+docker run -t -i --gpus all -v /PATH_TO_DATA:/work/DATA ChronoDocker
 ```
 
 Complete PATH_TO_DATA to have your time series visible on the docker environment, at /work/DATA
+Make sure to have installed the nvidia-docker2 package, more information on https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/user-guide.html.
 
 ### Manual:
 
