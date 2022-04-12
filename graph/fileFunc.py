@@ -37,7 +37,12 @@ def loadPath(search_path, ext = '*.*'):
 
 
 def createResultFolder(conf):
-    for i in range(0,20):
+    try:
+        os.mkdir(conf['Project'])
+    except:
+        pass
+
+    for i in range(0,100):
         saveFolder = os.path.join(conf['Project'], "Results %s" %(i))
         try:
             os.mkdir(saveFolder)
@@ -70,7 +75,6 @@ def createResultFolder(conf):
         except:
             pass
         
-    # if conf['SaveRSML']:
     rsmlPath = os.path.join(saveFolder, "RSML")
     try:
         os.mkdir(rsmlPath)
@@ -163,6 +167,7 @@ def getROIandSeed(conf, images, segFiles):
     t = conf['timeStep'] #always in minutes
     dia = 24*60/t
     c = int(N//dia)
+    c = max(1, c)
     
     for i in range(0, c):
         P2 = int(i*100)

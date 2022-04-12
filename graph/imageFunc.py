@@ -117,11 +117,10 @@ def saveEmpty(name, folder, original, seg):
     
     return
 
-
-def getCleanSeg(segFile, bbox, seed):
+def getCleanSeg(segFile, bbox, seed, originalSeed):
     seg = cv2.imread(segFile, 0)[bbox[0]:bbox[1],bbox[2]:bbox[3]]
     
-    seg[0:seed[1],:] = 0
+    seg[0:originalSeed[1],:] = 0
 
     kernel_size = 3
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(kernel_size,kernel_size))
@@ -130,34 +129,39 @@ def getCleanSeg(segFile, bbox, seed):
     seg = cv2.erode(seg, kernel)
     seg = cv2.dilate(seg, kernel)
     
-    contours, hierarchy = cv2.findContours(seg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(seg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
-    found = False
-    
+    j = 0
+
     if len(contour_sizes) != 0:
-        size, biggest_contour = max(contour_sizes, key=lambda x: x[0])
-        #define a mask
-        mask = np.zeros(seg.shape, np.uint8)
-        cv2.drawContours(mask,[biggest_contour], -1, 255, -1) 
-        seg = cv2.bitwise_and(mask, seg)
+        ### Sorts list of contours by size from bigger to smaller
+        contour_sizes.sort(key=lambda x: x[0], reverse=True)
         
-        dist = cv2.pointPolygonTest(biggest_contour,(seed[0], seed[1]), True)
-        dist = np.abs(dist)
-        is_in = cv2.pointPolygonTest(biggest_contour,(seed[0], seed[1]), False) > 0
-        
-        if (dist < 30 or is_in) and size > 30:
-            found = True
-        
-    return seg, found
+        for contour in contour_sizes:
+            if contour[0] < 30:
+                break
+            else:
+                dist = cv2.pointPolygonTest(contour[1],(seed[0], seed[1]), True)
+                dist = np.abs(dist)
+                is_in = cv2.pointPolygonTest(contour[1],(seed[0], seed[1]), False) > 0
+                
+                if (dist < 30 or is_in):
+                    mask = np.zeros(seg.shape, np.uint8)
+                    cv2.drawContours(mask,[contour[1]], -1, 255, -1) 
+                    seg2 = cv2.bitwise_and(mask, seg.copy())
+                
+                    return seg2, True
+            
+    return seg, False
 
 
 def getCleanSke(seg):
     ske = np.array(skeletonize(seg // 255), dtype = 'uint8')
     
-    ske = prune(ske, 4)
+    ske = prune(ske, 5)
     ske = trim(ske)
-    ske = prune(ske, 2)
+    ske = prune(ske, 3)
     ske = trim(ske)
 
     bnodes, enodes = skeleton_nodes(ske)
