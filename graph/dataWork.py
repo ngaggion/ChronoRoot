@@ -17,19 +17,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore')
 import re
 import pandas as pd
 import os
 from .qr import get_pixel_size, qr_detect, load_path
 from scipy import signal
+import json
 
-def dataWork(conf, pfile, folder):
+def dataWork(conf, pfile, folder, N_exp = None):
     data = pd.read_csv(pfile)
     shape = data.shape
     N = shape[0]
+
+    if N_exp is not None:
+        if N_exp < N:
+            #Takes the first N_exp rows from pandas dataframe
+            data = data.iloc[:N_exp]
+        else:
+            #Adds empty rows to dataframe to get N_exp rows 
+            for i in range(N_exp - N):
+                #data = data.append(pd.DataFrame(np.zeros((1, shape[1])), columns = data.columns))
+                
+                data = data.append(data.iloc[-1])
+
+    # drops indexes of dataframe
+    data = data.reset_index(drop=True)
+                
+    path = os.path.abspath(os.path.join(folder, 'metadata.json'))
+    with open(path) as f:
+        metadata = json.load(f)
     
-    path = os.path.abspath(os.path.join(folder, '..'))
-    files = load_path(conf['Path'], '*.png')
+    #print(metadata['folder'])
+
+    files = load_path(metadata['folder'], '*.png')
     files = [file for file in files if 'mask' not in file][:20]
 
     for i in files:
@@ -38,10 +59,11 @@ def dataWork(conf, pfile, folder):
             pixel_size = 10 / get_pixel_size(detect)
             break
         except:
+            #print('QR not found in', i)
             pixel_size = 0.04
             pass
     
-    print('Pixel size (in mm): ', pixel_size)
+    #print('Pixel size (in mm): ', pixel_size)
     
     index = data['TimeStep'].to_numpy()
     mainRoot = data['MainRootLength'].to_numpy().astype('float')
@@ -58,8 +80,8 @@ def dataWork(conf, pfile, folder):
     # numlateralRoots[0:600] = 0.0
 
     # Smooth
-    mainRoot = signal.medfilt(mainRoot, 5) 
-    lateralRoots = signal.medfilt(lateralRoots, 5) 
+    mainRoot = signal.medfilt(mainRoot, 9) 
+    lateralRoots = signal.medfilt(lateralRoots, 9) 
     numlateralRoots = signal.medfilt(numlateralRoots, 25)
 
     for i in range(1, len(mainRoot)):
@@ -148,12 +170,12 @@ def dataWork(conf, pfile, folder):
     mainRootGrad = np.gradient(mainRootPooled2, edge_order = 2)
     lateralRootsGrad = np.gradient(lateralRootsPooled2, edge_order = 2)
     
-    mainRootGrad = signal.medfilt(mainRootGrad, 5)
-    lateralRootsGrad = signal.medfilt(lateralRootsGrad, 5)
+    #mainRootGrad = signal.medfilt(mainRootGrad, 5)
+    #lateralRootsGrad = signal.medfilt(lateralRootsGrad, 5)
     
     totalRootsLengthPooled = mainRootPooled2 + lateralRootsPooled2
     totalRootsGrad = np.gradient(totalRootsLengthPooled, edge_order = 2)
-    totalRootsGrad = signal.medfilt(totalRootsGrad, 5)
+    #totalRootsGrad = signal.medfilt(totalRootsGrad, 5)
     
     aporte_al_total = mainRootPooled2 / totalRootsLengthPooled * 100
     where_are_NaNs = np.isnan(aporte_al_total)
