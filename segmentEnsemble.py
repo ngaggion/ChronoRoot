@@ -106,7 +106,12 @@ def Segment(conf, input_dir, output_dir, crf):
     conf['ckptDir'] = os.path.join(os.path.join('modelWeights', conf['Model']),'ckpt')
     net.restore(conf['ckptDir'])
 
-    n = len(Provider.data_files)
+    limit = conf['LIMIT']
+
+    if limit != -1:
+        n = limit
+    else:
+        n = len(Provider.data_files)
     
     for i in range(0, n):
         print("File %s out of %s" %(i+1,n))
@@ -154,8 +159,15 @@ def ensembleModels(conf, input_dir, output_dir, crf, models):
 
     accum = np.zeros(cv2.imread(images[0], 0).shape, dtype=float)
     
-    for i in range(0, len(images)):
-        print("File %s out of %s" %(i+1,len(images)))
+    limit = conf['LIMIT']
+
+    if limit != -1:
+        n = limit
+    else:
+        n = len(images)
+
+    for i in range(0, n):
+        print("File %s out of %s" %(i+1,n))
         
         segs = []
         for t in outs:

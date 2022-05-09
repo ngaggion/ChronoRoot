@@ -84,7 +84,12 @@ def SegmentUNet(conf, input_dir, output_dir, crf):
     conf['ckptDir'] = os.path.join(os.path.join('modelWeights', conf['SavePoint']),'ckpt')
     net.restore(conf['ckptDir'])
 
-    n = len(Provider.data_files)
+    limit = conf['LIMIT']
+    if limit != -1:
+        n = limit
+    else:
+        n = len(Provider.data_files)
+
     accum = np.zeros(data.shape[1:3])
     
     for i in range(0, n):
