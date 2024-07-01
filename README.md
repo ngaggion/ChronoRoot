@@ -16,6 +16,8 @@ Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
 
 ## Installation:
 
+THIS VERSION IS NO LONGER MAINTAINED, FIND THE LATEST APPLICATION HERE: https://github.com/ngaggion/ChronoRootTool
+
 ### Docker:
 
 Initial Docker support, for plant root segmentation only, as Docker does not provide a way to use openCV windows for RoI selection.\
