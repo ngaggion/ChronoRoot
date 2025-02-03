@@ -16,7 +16,7 @@ Module controller available on: https://github.com/ThomasBlein/ChronoRootControl
 
 ## Installation:
 
-THIS VERSION IS NO LONGER MAINTAINED, FIND THE LATEST APPLICATION HERE: https://github.com/ngaggion/ChronoRootTool
+THIS VERSION IS NO LONGER MAINTAINED, FIND THE LATEST VERSION HERE: https://github.com/ngaggion/ChronoRoot2
 
 ### Docker:
 
